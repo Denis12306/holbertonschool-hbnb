@@ -1,3 +1,6 @@
+Project done by GAVAUD Denis, MASSERON Axel and PASQUIET Valentin
+
+
 # holbertonschool-hbnb
 Clone the Airbnb application with peers.
 
