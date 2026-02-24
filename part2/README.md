@@ -25,3 +25,37 @@ The application run the run.py files who is the entry point.
 python3 run.py
 ```
 You should see the Flask application running, although no routes are functional yet. This confirms that the project structure and basic setup are correct and ready for further development.
+
+
+
+Document the Implementation
+
+
+Update the README.md file to include information about the Business Logic layer, describing the entities and their responsibilities, include examples of how the classes and methods can be used :
+
+The Business Logic layer contains the core entities of the HBnB application.
+It defines the application's data models and enforces validation rules and relationships between objects.
+
+This layer is responsible for:
+
+- Managing application entities
+- Validating data
+- Defining relationships between objects
+- Providing reusable business behaviors
+
+All business models inherit from BaseModel.
+
+BaseModel is the parent class for all entities.
+
+#### Responsibilities
+Generate a unique identifier (id)
+Store creation and update timestamps
+Provide shared behavior for all models
+
+#### Example
+
+```python
+from app.models.base_model import BaseModel
+
+obj = BaseModel()
+print(obj.id)
