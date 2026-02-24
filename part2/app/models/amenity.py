@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 from base_model import BaseModel
+from app.models.place import Place
 
 
 class Amenity(BaseModel):
@@ -25,3 +26,7 @@ class Amenity(BaseModel):
 list_equipement = ["Wi-Fi", "Parking"]
 
 amenities = [Amenity(name) for name in list_equipement]
+
+
+def add_place(self, place):
+    self.place.append(place)
