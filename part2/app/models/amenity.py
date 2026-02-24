@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from base_model import BaseModel
+from .base_model import BaseModel
 
 
 class Amenity(BaseModel):
@@ -20,6 +20,10 @@ class Amenity(BaseModel):
             raise ValueError("name must be at most 50 characters")
 
         self.name = name
+        self.places = []
+
+    def add_place(self, place):
+        self.places.append(place)
 
 
 list_equipement = ["Wi-Fi", "Parking"]
