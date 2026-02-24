@@ -52,6 +52,80 @@ Generate a unique identifier (id)
 Store creation and update timestamps
 Provide shared behavior for all models
 
+#### Relationships
+- Parent class of all entities (`User`, `Place`, `Review`, `Amenity`).
+
+---
+
+### User
+
+#### Responsibility
+Represents a user of the HBnB platform. A user can own places and write reviews.
+
+#### Main Attributes
+- `id`
+- `first_name`
+- `last_name`
+- `email`
+
+#### Relationships
+- A User can own multiple **Places**.
+- A User can write multiple **Reviews**.
+
+---
+
+### Place
+
+#### Responsibility
+Represents a property available on the platform. It stores location,
+price information, and manages associated reviews and amenities.
+
+#### Main Attributes
+- `title`
+- `description`
+- `price`
+- `latitude`
+- `longitude`
+- `owner`
+- `reviews`
+- `amenities`
+
+#### Relationships
+- Belongs to one **User** (owner).
+- Can contain multiple **Reviews**.
+- Can include multiple **Amenities**.
+
+---
+
+### Review
+
+#### Responsibility
+Represents feedback written by a user about a place.
+
+#### Main Attributes
+- `text`
+- `rating`
+- `user`
+- `place`
+
+#### Relationships
+- Linked to one **User**.
+- Linked to one **Place**.
+
+---
+
+### Amenity
+
+#### Responsibility
+Represents a feature or service available in a place (WiFi, Pool, etc.).
+
+#### Main Attributes
+- `name`
+
+#### Relationships
+- Can be associated with multiple **Places**.
+- A Place can contain multiple Amenities.
+
 #### Example
 
 ```python
