@@ -1,5 +1,3 @@
-import uuid
-from datetime import datetime
 from .base_model import BaseModel
 
 

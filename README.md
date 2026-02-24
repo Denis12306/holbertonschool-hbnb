@@ -1,4 +1,4 @@
-Project done by GAVAUD Denis, MASSERON Axel and PASQUIET Valentin
+Project done by GAVAUD Denis and PASQUIET Valentin
 
 
 # holbertonschool-hbnb
