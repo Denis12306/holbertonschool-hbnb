@@ -1,9 +1,5 @@
 #!/usr/bin/python3
-"""
-This module defines the Review class, representing a user's evaluation
-of a specific place.
-"""
-from .base_model import BaseModel
+from base_model import BaseModel
 
 
 class Review(BaseModel):

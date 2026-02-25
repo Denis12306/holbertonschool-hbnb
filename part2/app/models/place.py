@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-"""
-This modules defines the Place class, representing a lodging entity within the system"""
-from .base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class Place(BaseModel):
