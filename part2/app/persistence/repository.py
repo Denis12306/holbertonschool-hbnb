@@ -38,7 +38,7 @@ class InMemoryRepository(Repository):
     def get(self, obj_id):
         return self._storage.get(obj_id)
 
-    def get_all(self):
+    def get_all(self): # type: ignore
         return list(self._storage.values())
 
     def update(self, obj_id, data):
