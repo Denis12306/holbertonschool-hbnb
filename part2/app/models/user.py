@@ -1,5 +1,5 @@
 from email_validator import validate_email, EmailNotValidError
-from .base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class User(BaseModel):
