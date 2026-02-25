@@ -1,9 +1,32 @@
 #!/usr/bin/python3
-from base_model import BaseModel
+"""
+Module for the Review class.
+This module defines the Review class which inherits from BaseModel.
+"""
+from models.base_model import BaseModel
 
 
 class Review(BaseModel):
+    """
+    Represents a review for a place.
+
+    Attributes:
+        text (str): The content of the review.
+        rating (int): The rating given to the place (1-5).
+        place (Place): The Place instance associated with the review.
+        user (User): The User instance who wrote the review.
+    """
+
     def __init__(self, text, rating, place, user):
+        """
+        Initializes a new Review instance.
+
+        Args:
+            text (str): The review's content.
+            rating (int): Numerical rating from 1 to 5.
+            place (Place): The place being reviewed.
+            user (User): The author of the review.
+        """
         super().__init__()
         self.text = text
         self.rating = rating
@@ -12,6 +35,7 @@ class Review(BaseModel):
 
     @property
     def text(self):
+        """str: Get or set the content of the review."""
         return self._text
 
     @text.setter
@@ -22,6 +46,7 @@ class Review(BaseModel):
 
     @property
     def rating(self):
+        """int: Get or set the rating (must be between 1 and 5)."""
         return self._rating
 
     @rating.setter
@@ -32,6 +57,7 @@ class Review(BaseModel):
 
     @property
     def place(self):
+        """Place: Get or set the Place linked to this review."""
         return self._place
 
     @place.setter
@@ -42,6 +68,7 @@ class Review(BaseModel):
 
     @property
     def user(self):
+        """User: Get or set the User who authored this review."""
         return self._user
 
     @user.setter
