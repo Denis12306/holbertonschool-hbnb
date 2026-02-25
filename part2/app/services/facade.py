@@ -55,13 +55,9 @@ class HBnBFacade:
         place = self.get_place(place_id)
         if not place:
             return None
-        """Liste des champs que l'on autorise à modifier"""
-        allowed_fields = ["title", "description",
-                          "price", "latitude", "longitude"]
-        for key, value in allowed_fields.items():
+        for key, value in place_data.items():
             setattr(place, key, value)
-        """Le repo sauvegarde les changements"""
-        self.place_repo.update(place)
+    
         return place
 
     """Amenity Methods"""
