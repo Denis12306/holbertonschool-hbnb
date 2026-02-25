@@ -12,10 +12,12 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
+    """PLACE"""
     def get_place(self, place_id):
         # Logic will be implemented in later tasks
         pass
 
+    """USER"""
     def create_user(self, user_data):
         # Placeholder method for creating a user
         user = User(**user_data)
@@ -46,3 +48,13 @@ class HBnBFacade:
     def update_place(self, place_id, place_data):
     # Placeholder for logic to update a place
         pass
+    def get_all_users(self):
+        return self.user_repo.get_all()
+
+    def update_user(self, user_id, user_data):
+        user = self.get_user(user_id)
+        if not user:
+            return None
+        for key, value in user_data.items():
+            setattr(user, key, value)
+            return user
