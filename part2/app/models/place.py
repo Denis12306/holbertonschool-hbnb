@@ -10,7 +10,7 @@ class Place(BaseModel):
     Represents a place or accommodation available in the application.
     """
 
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         """
         Initialize a new Place instance.
         """
@@ -20,7 +20,7 @@ class Place(BaseModel):
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner_id = owner_id
         self.reviews = []
         self.amenities = []
 
@@ -32,8 +32,23 @@ class Place(BaseModel):
     @title.setter
     def title(self, value):
         if not value or len(value) > 100:
-            raise ValueError("Title is required and must be under 100 characters")
+            raise ValueError(
+                "Title is required and must be under 100 characters")
         self._title = value
+
+    @property
+    def description(self):
+        """Getter for description"""
+        return self.description
+
+    @description.setter
+    def description(self, value):
+        if value is not None:
+            if not isinstance(value, str):
+                raise ValueError("Description must be a string")
+            if len(value) > 500:
+                raise ValueError("Description too long")
+        self._description = value
 
     @property
     def price(self):
@@ -85,4 +100,5 @@ class Place(BaseModel):
 
     def add_amenity(self, amenity):
         """Add an amenity to the place's list of amenities."""
-        self.amenities.append(amenity)
+        if amenity not in self.amenities:
+            self.amenities.append(amenity)
