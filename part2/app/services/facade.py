@@ -5,6 +5,7 @@ Business Logic, and Persistence layers. You will interact with the repositories
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
+from app.models.review import Review
 
 
 class HBnBFacade:
@@ -16,7 +17,7 @@ class HBnBFacade:
         self.users = []
         self.amenities = []
 
-    """User Methods"""
+    """USER Methods"""
 
     def create_user(self, user_data):
         # Placeholder method for creating a user
@@ -41,7 +42,7 @@ class HBnBFacade:
             setattr(user, key, value)
             return user
 
-    """AMENITY"""
+    """AMENITY Methods"""
 
     def create_amenity(self, amenity_data):
         new_amenity = Amenity(**amenity_data)
@@ -59,7 +60,8 @@ class HBnBFacade:
         if updated is None:
             raise ValueError("Amenity not found")
         return updated
-    """Place Methods"""
+
+    """PLACE Methods"""
 
     def create_place(self, place_data):
         place = Place(**place_data)
@@ -78,9 +80,46 @@ class HBnBFacade:
             return None
         for key, value in place_data.items():
             setattr(place, key, value)
-    
+
         return place
 
-    """Amenity Methods"""
+    """REVIEW Methods"""
 
-    """Review Methods"""
+    def create_review(self, review_data):
+        user = self.user_repo.get(review_data.get("user_id"))
+        place = self.place_repo.get(review_data.get("place_id"))
+
+        if not user or not place:
+            return None
+
+        review = Review(**review_data)
+        self.review_repo.add(review)
+        return review
+
+    def get_review(self, review_id):
+        return self.review_repo.get(review_id)
+
+    def get_all_reviews(self):
+        return self.review_repo.get_all()
+
+    def get_reviews_by_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        return place.reviews
+
+    def update_review(self, review_id, review_data):
+        review = self.get_review(review_id)
+        if not review:
+            return None
+
+        allowed_fields = ["text", "rating"]
+
+        for key in allowed_fields:
+            if key in review_data:
+                setattr(review, key, review_data[key])
+
+        return review
+
+    def delete_review(self, review_id):
+        return self.review_repo.delete(review_id)

@@ -3,7 +3,7 @@
 Module for the Review class.
 This module defines the Review class which inherits from BaseModel.
 """
-from models.base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class Review(BaseModel):
