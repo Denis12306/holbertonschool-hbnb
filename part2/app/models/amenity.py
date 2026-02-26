@@ -1,4 +1,4 @@
-from base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
@@ -27,3 +27,35 @@ class Amenity(BaseModel):
 list_equipement = ["Wi-Fi", "Parking"]
 
 amenities = [Amenity(name) for name in list_equipement]
+
+
+def create_amenity(self, amenity_data):
+    # Placeholder for logic to create an amenity
+    new_amenity = Amenity(name=amenity_data['name'])
+
+    self.amenity_repo.add(new_amenity)
+
+    return new_amenity
+
+
+def add(self, obj):
+    self._items.append(obj)
+
+
+def get(self, obj_id):
+    for obj in self._items:
+        if obj.id == obj_id:
+            return obj
+        raise ValueError("Object not found")
+
+
+def get_all(self):
+    return self._items
+
+
+def update(self, obj_id, data: dict):
+    obj = self.get(obj_id)
+    for key, value in data.items():
+        if hasattr(obj, key):
+            setattr(obj, key, value)
+        return obj

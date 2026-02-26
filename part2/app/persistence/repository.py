@@ -2,7 +2,10 @@ from abc import ABC, abstractmethod
 """The in-memory repository will handle object storage and validation.
 It follows a consistent interface that will later
 be replaced by a database-backed repository."""
+
+
 class Repository(ABC):
+    # ... somes methods ...
     @abstractmethod
     def add(self, obj):
         pass
@@ -13,6 +16,7 @@ class Repository(ABC):
 
     @abstractmethod
     def get_all(self):
+        # returns list of all objects in storage
         pass
 
     @abstractmethod
@@ -38,13 +42,18 @@ class InMemoryRepository(Repository):
     def get(self, obj_id):
         return self._storage.get(obj_id)
 
-    def get_all(self): # type: ignore
-        return list(self._storage.values())
+    def get_all(self):
+        """Should return a list of all stored objects"""
+        pass
 
     def update(self, obj_id, data):
         obj = self.get(obj_id)
-        if obj:
-            obj.update(data)
+        if obj is None:
+            raise ValueError("Object not found")
+        for key, value in data.items():
+            if hasattr(obj, key):
+                setattr(obj, key, value)
+        return obj
 
     def delete(self, obj_id):
         if obj_id in self._storage:
