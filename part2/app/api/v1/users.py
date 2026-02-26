@@ -29,6 +29,11 @@ class UserList(Resource):
         new_user = facade.create_user(user_data)
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
 
+    def get(self):
+        """Retrieve all users"""
+        users = facade.get_all_users()
+        return [u.to_dict() for u in users], 200
+
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -58,4 +63,4 @@ class UserResource(Resource):
             return {'error': 'Invalid input data'}, 400
 
         return {'id': updated_user.id, 'first_name': updated_user.first_name,
-            'last_name': updated_user.last_name, 'email': updated_user.email}, 200
+                'last_name': updated_user.last_name, 'email': updated_user.email}, 200

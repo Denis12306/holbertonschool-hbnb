@@ -16,8 +16,7 @@ class Repository(ABC):
 
     @abstractmethod
     def get_all(self):
-        # returns list of all objects in storage
-        pass
+        return list(self._storage.values())
 
     @abstractmethod
     def update(self, obj_id, data):
