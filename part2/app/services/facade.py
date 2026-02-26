@@ -4,6 +4,7 @@ Business Logic, and Persistence layers. You will interact with the repositories
 (like the in-memory repository) through this Class:"""
 from app.models.user import User
 from app.models.amenity import Amenity
+from app.models.place import Place
 
 
 class HBnBFacade:
@@ -15,13 +16,7 @@ class HBnBFacade:
         self.users = []
         self.amenities = []
 
-    """PLACE"""
-
-    def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass
-
-    """USER"""
+    """User Methods"""
 
     def create_user(self, user_data):
         # Placeholder method for creating a user
@@ -64,3 +59,28 @@ class HBnBFacade:
         if updated is None:
             raise ValueError("Amenity not found")
         return updated
+    """Place Methods"""
+
+    def create_place(self, place_data):
+        place = Place(**place_data)
+        self.place_repo.add(place)
+        return place
+
+    def get_place(self, place_id):
+        return self.place_repo.get(place_id)
+
+    def get_all_places(self):
+        return self.place_repo.get_all()
+
+    def update_place(self, place_id, place_data):
+        place = self.get_place(place_id)
+        if not place:
+            return None
+        for key, value in place_data.items():
+            setattr(place, key, value)
+    
+        return place
+
+    """Amenity Methods"""
+
+    """Review Methods"""
