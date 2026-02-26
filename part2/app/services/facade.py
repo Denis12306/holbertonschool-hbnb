@@ -3,6 +3,7 @@ from app.persistence.repository import InMemoryRepository
 Business Logic, and Persistence layers. You will interact with the repositories
 (like the in-memory repository) through this Class:"""
 from app.models.user import User
+from app.models.amenity import Amenity
 from app.models.place import Place
 
 
@@ -12,6 +13,8 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
+        self.users = []
+        self.amenities = []
 
     """User Methods"""
 
@@ -38,6 +41,24 @@ class HBnBFacade:
             setattr(user, key, value)
             return user
 
+    """AMENITY"""
+
+    def create_amenity(self, amenity_data):
+        new_amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(new_amenity)
+        return new_amenity
+
+    def get_amenity(self, amenity_id):
+        return self.amenity_repo.get(amenity_id)
+
+    def get_all_amenities(self):
+        return self.amenity_repo.get_all()
+
+    def update_amenity(self, amenity_id, amenity_data):
+        updated = self.amenity_repo.update(amenity_id, amenity_data)
+        if updated is None:
+            raise ValueError("Amenity not found")
+        return updated
     """Place Methods"""
 
     def create_place(self, place_data):
