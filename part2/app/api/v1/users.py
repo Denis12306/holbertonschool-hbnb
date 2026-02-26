@@ -29,10 +29,19 @@ class UserList(Resource):
         new_user = facade.create_user(user_data)
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
 
+    @api.response(200, 'List of users retrieved successfully')
     def get(self):
-        """Retrieve all users"""
-        users = facade.get_all_users()
-        return [u.to_dict() for u in users], 200
+        """Retrieve a list of all users"""
+        all_users = facade.get_all_users()
+        user_list = []
+        for user in all_users:
+            user_list.append({
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+            })
+        return user_list, 200
 
 
 @api.route('/<user_id>')
