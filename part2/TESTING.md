@@ -59,3 +59,11 @@ The following elements have been verified:
 - **Models**: The `User` model correctly displays mandatory fields (`first_name`, `last_name`, `email`).
 - **Endpoints**: All CRUD operations for Users are exposed and documented.
 - **Validation**: Error codes (400, 404) are explicitly listed for each endpoint.
+
+## 5. Conclusion
+All core endpoints for the User entity have been validated. 
+- **Validation Logic**: Implemented using Flask-RESTx fields and patterns.
+- **Automated Testing**: 100% pass rate for unit tests.
+- **Manual Verification**: cURL tests confirm expected HTTP status codes (201, 400, 404).
+
+The API is robust, documented, and ready for the next development phase.
