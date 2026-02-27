@@ -37,7 +37,7 @@ place_model = api.model('Place', {
 
 @api.route('/')
 class PlaceList(Resource):
-    @api.expect(place_model)
+    @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
@@ -52,7 +52,7 @@ class PlaceList(Resource):
                 'price': new_place.price,
                 'latitude': new_place.latitude,
                 'longitude': new_place.longitude,
-                'owner_id': new_place.owner.id
+                'owner_id': new_place.owner_id
             }, 201
         except ValueError as e:
             return {'message': str(e)}, 400
@@ -61,7 +61,7 @@ class PlaceList(Resource):
     def get(self):
         """Retrieve a list of all places"""
         places = facade.get_all_places()
-        return [{'id': p.id, 'title': p.title, 'price': p.price} for p in places], 200
+        return [{'id': p.id, 'title': p.title, 'latitude': p.latitude, 'longitude': p.longitude} for p in places], 200
 
 
 @api.route('/<place_id>')
@@ -72,23 +72,30 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         place = facade.get_place(place_id)
         if not place:
-            return {'message': 'Place not found'}, 404
-
+            return {"error": "Place not found"}, 404
+        owner_data = facade.get_user(place.owner_id)
+        amenities_list = []
+        for i in place.amenities:
+            name_amenity = facade.get_amenity(i)
+            amenities_list.append({
+                "id": i,
+                "name": name_amenity.name
+            })
         return {
-            'id': place.id,
-            'title': place.title,
-            'description': place.description,
-            'price': place.price,
-            'latitude': place.latitude,
-            'longitude': place.longitude,
-            'owner': {
-                'id': place.owner.id,
-                'first_name': place.owner.first_name,
-                'last_name': place.owner.last_name,
-                'email': place.owner.email
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner": {
+                "id": place.owner_id,
+                "first_name": owner_data.first_name,
+                "last_name": owner_data.last_name,
+                "email": owner_data.email
             },
-            'amenities': [{'id': a.id, 'name': a.name} for a in place.amenities]
+            "amenities": amenities_list
         }, 200
+
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')

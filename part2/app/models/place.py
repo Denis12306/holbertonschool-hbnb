@@ -21,6 +21,7 @@ class Place(BaseModel):
         self.latitude = latitude
         self.longitude = longitude
         self.owner_id = owner_id
+        self._owner = None
         self.reviews = []
         self.amenities = []
 
@@ -39,7 +40,7 @@ class Place(BaseModel):
     @property
     def description(self):
         """Getter for description"""
-        return self.description
+        return self._description
 
     @description.setter
     def description(self, value):

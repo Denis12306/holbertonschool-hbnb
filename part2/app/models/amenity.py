@@ -59,3 +59,6 @@ def update(self, obj_id, data: dict):
         if hasattr(obj, key):
             setattr(obj, key, value)
         return obj
+
+def to_dict(self):
+    return {'id': self.id, 'name': self.name}

@@ -14,8 +14,6 @@ class HBnBFacade:
         self.place_repo = InMemoryRepository()
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
-        self.users = []
-        self.amenities = []
 
     """USER Methods"""
 
@@ -40,7 +38,7 @@ class HBnBFacade:
             return None
         for key, value in user_data.items():
             setattr(user, key, value)
-            return user
+        return user
 
     """AMENITY Methods"""
 
@@ -64,12 +62,31 @@ class HBnBFacade:
     """PLACE Methods"""
 
     def create_place(self, place_data):
-        place = Place(**place_data)
-        self.place_repo.add(place)
-        return place
+        owner_id = place_data.get('owner_id')
+        owner = self.user_repo.get(owner_id)
+        if not owner:
+            raise ValueError("Owner not found")
+
+        amenity_ids = place_data.pop('amenities', [])
+
+        new_place = Place(**place_data)
+        new_place.owner = owner
+
+        for amenity_id in set(amenity_ids):
+            amenity = self.amenity_repo.get(amenity_id)
+            if amenity:
+                new_place.add_amenity(amenity)
+            else:
+                raise ValueError(f"Amenity '{aid}' not found")
+
+        self.place_repo.add(new_place)
+        return new_place
 
     def get_place(self, place_id):
-        return self.place_repo.get(place_id)
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+        return place
 
     def get_all_places(self):
         return self.place_repo.get_all()
@@ -90,10 +107,19 @@ class HBnBFacade:
         place = self.place_repo.get(review_data.get("place_id"))
 
         if not user or not place:
-            return None
+            raise ValueError("User or Place not found")
 
-        review = Review(**review_data)
+        review = Review(
+            text=review_data["text"],
+            rating=review_data["rating"],
+            user=user,
+            place=place
+        )
+
         self.review_repo.add(review)
+
+        place.add_review(review)
+
         return review
 
     def get_review(self, review_id):
