@@ -1,4 +1,5 @@
 from app.persistence.repository import InMemoryRepository
+
 """This class will handle communication between the Presentation,
 Business Logic, and Persistence layers. You will interact with the repositories
 (like the in-memory repository) through this Class:"""
@@ -69,7 +70,6 @@ class HBnBFacade:
         new_place = Place(**place_data)
         new_place.owner = owner
 
-        # Ajouter amenities
         for amenity_id in set(amenity_ids):
             amenity = self.amenity_repo.get(amenity_id)
             if amenity:
@@ -137,7 +137,11 @@ class HBnBFacade:
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
-        if review and hasattr(review, "place") and review.place:
+        if not review:
+            return False
+        if hasattr(review, "place") and review.place:
             review.place.reviews = [
-                r for r in review.place.reviews if r.id != review_id]
-        return self.review_repo.delete(review_id)
+                r for r in review.place.reviews if r.id != review_id
+            ]
+        self.review_repo.delete(review_id)
+        return True
