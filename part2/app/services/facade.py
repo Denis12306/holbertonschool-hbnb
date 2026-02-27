@@ -2,6 +2,7 @@ from app.persistence.repository import InMemoryRepository
 """This class will handle communication between the Presentation,
 Business Logic, and Persistence layers. You will interact with the repositories
 (like the in-memory repository) through this Class:"""
+
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
@@ -15,10 +16,8 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
-    """USER Methods"""
-
+    # ---------------- User Methods ----------------
     def create_user(self, user_data):
-        # Placeholder method for creating a user
         user = User(**user_data)
         self.user_repo.add(user)
         return user
@@ -27,7 +26,7 @@ class HBnBFacade:
         return self.user_repo.get(user_id)
 
     def get_user_by_email(self, email):
-        return self.user_repo.get_by_attribute('email', email)
+        return self.user_repo.get_by_attribute("email", email)
 
     def get_all_users(self):
         return self.user_repo.get_all()
@@ -40,12 +39,11 @@ class HBnBFacade:
             setattr(user, key, value)
         return user
 
-    """AMENITY Methods"""
-
+    # ---------------- Amenity Methods ----------------
     def create_amenity(self, amenity_data):
-        new_amenity = Amenity(**amenity_data)
-        self.amenity_repo.add(new_amenity)
-        return new_amenity
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)
+        return amenity
 
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
@@ -55,38 +53,35 @@ class HBnBFacade:
 
     def update_amenity(self, amenity_id, amenity_data):
         updated = self.amenity_repo.update(amenity_id, amenity_data)
-        if updated is None:
+        if not updated:
             raise ValueError("Amenity not found")
         return updated
 
-    """PLACE Methods"""
-
+    # ---------------- Place Methods ----------------
     def create_place(self, place_data):
-        owner_id = place_data.get('owner_id')
+        owner_id = place_data.get("owner_id")
         owner = self.user_repo.get(owner_id)
         if not owner:
             raise ValueError("Owner not found")
 
-        amenity_ids = place_data.pop('amenities', [])
+        amenity_ids = place_data.pop("amenities", [])
 
         new_place = Place(**place_data)
         new_place.owner = owner
 
+        # Ajouter amenities
         for amenity_id in set(amenity_ids):
             amenity = self.amenity_repo.get(amenity_id)
             if amenity:
                 new_place.add_amenity(amenity)
             else:
-                raise ValueError(f"Amenity '{aid}' not found")
+                raise ValueError(f"Amenity '{amenity_id}' not found")
 
         self.place_repo.add(new_place)
         return new_place
 
     def get_place(self, place_id):
-        place = self.place_repo.get(place_id)
-        if not place:
-            return None
-        return place
+        return self.place_repo.get(place_id)
 
     def get_all_places(self):
         return self.place_repo.get_all()
@@ -97,11 +92,9 @@ class HBnBFacade:
             return None
         for key, value in place_data.items():
             setattr(place, key, value)
-
         return place
 
-    """REVIEW Methods"""
-
+    # ---------------- Review Methods ----------------
     def create_review(self, review_data):
         user = self.user_repo.get(review_data.get("user_id"))
         place = self.place_repo.get(review_data.get("place_id"))
@@ -117,9 +110,7 @@ class HBnBFacade:
         )
 
         self.review_repo.add(review)
-
         place.add_review(review)
-
         return review
 
     def get_review(self, review_id):
@@ -132,20 +123,21 @@ class HBnBFacade:
         place = self.place_repo.get(place_id)
         if not place:
             return None
-        return place.reviews
+        return getattr(place, "reviews", [])
 
     def update_review(self, review_id, review_data):
         review = self.get_review(review_id)
         if not review:
             return None
-
         allowed_fields = ["text", "rating"]
-
         for key in allowed_fields:
             if key in review_data:
                 setattr(review, key, review_data[key])
-
         return review
 
     def delete_review(self, review_id):
+        review = self.review_repo.get(review_id)
+        if review and hasattr(review, "place") and review.place:
+            review.place.reviews = [
+                r for r in review.place.reviews if r.id != review_id]
         return self.review_repo.delete(review_id)
