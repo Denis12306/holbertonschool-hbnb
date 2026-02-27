@@ -7,8 +7,8 @@ api = Namespace('reviews', description='Review operations')
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
-    'user_id': fields.String(required=True, description='ID of the user'),
-    'place_id': fields.String(required=True, description='ID of the place')
+    'user.id': fields.String(required=True, description='ID of the user'),
+    'place.id': fields.String(required=True, description='ID of the place')
 })
 
 
@@ -30,8 +30,8 @@ class ReviewList(Resource):
             'id': new_review.id,
             'text': new_review.text,
             'rating': new_review.rating,
-            'user_id': new_review.user_id,
-            'place_id': new_review.place_id
+            'user.id': new_review.user.id,
+            'place.id': new_review.place.id
         }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')

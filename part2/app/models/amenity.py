@@ -24,7 +24,7 @@ class Amenity(BaseModel):
         self.places.append(place)
 
 
-list_equipement = ["Wi-Fi", "Parking"]
+list_equipement = ["Wi-Fi", "Air Conditioning","Parking"]
 
 amenities = [Amenity(name) for name in list_equipement]
 
