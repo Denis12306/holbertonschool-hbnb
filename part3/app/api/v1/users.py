@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
-from app.__init__ import bcrypt
+from app import bcrypt
 
 api = Namespace('users', description='User operations')
 
