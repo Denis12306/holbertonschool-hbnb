@@ -2,4 +2,4 @@ Flask
 flask-restx
 email-validator
 flask-bcrypt
-
+flask-jwt-extended
