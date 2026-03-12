@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 api = Namespace('places', description='Place operations')
 
@@ -41,24 +42,44 @@ class PlaceList(Resource):
     @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new place"""
         place_data = api.payload
         try:
+            current_user = int(get_jwt_identity())
+            place_data = api.payload
+
+            owner_id = int(place_data.get("owner_id", 0))
+            if not facade.get_user_by_id(owner_id):
+                return {"error": "User does not exist"}, 404
+
+            if owner_id != current_user:
+                return {"error": "Unauthorized action"}, 403
+
+            amenities = []
+            for name in place_data.get("amenities", []):
+                amenity_obj = facade.get_amenity(name)
+                if not amenity_obj:
+                    return {"error": f"Amenity '{name}' not found"}, 404
+                amenities.append(amenity_obj)
+
+            place_data["amenities"] = amenities
             new_place = facade.create_place(place_data)
-            if not new_place.owner:
-                return {'message': 'Owner not found'}, 400
+
             return {
-                'id': new_place.id,
-                'title': new_place.title,
-                'description': new_place.description,
-                'price': new_place.price,
-                'latitude': new_place.latitude,
-                'longitude': new_place.longitude,
-                'owner_id': new_place.owner.id
+                "id": new_place.id,
+                "title": new_place.title,
+                "description": new_place.description,
+                "price": new_place.price,
+                "latitude": new_place.latitude,
+                "longitude": new_place.longitude,
+                "owner_id": new_place.owner_id,
+                "amenities": [{"id": a.id, "name": a.name} for a in new_place.amenities]
             }, 201
-        except ValueError as e:
-            return {'message': str(e)}, 400
+
+        except (KeyError, ValueError, TypeError) as e:
+            return {"error": str(e)}, 400
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -75,7 +96,7 @@ class PlaceList(Resource):
 
 
 @api.route('/<place_id>')
-class PlaceResource(Resource):
+class PlaceIDResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
@@ -110,6 +131,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, place_id):
         """Update a place's information"""
         place_data = api.payload
@@ -142,7 +164,7 @@ class PlaceReviewList(Resource):
 
 
 @api.route('/places/<place_id>/reviews')
-class PlaceReviewList(Resource):
+class ReviewPlacesList(Resource):
 
     @api.response(200, 'List of reviews for the place retrieved successfully')
     @api.response(404, 'Place not found')
@@ -163,3 +185,63 @@ class PlaceReviewList(Resource):
             }
             for r in reviews
         ], 200
+
+
+@api.route('/places')
+class PlacesLists(Resource):
+
+    @api.response(200, 'Success')
+    def get(self):
+        """Retrieve a list of available places"""
+        places = facade.get_all_places() or []
+
+        result = []
+        for place in places:
+            result.append({
+                "id": place.id,
+                "title": place.title,
+                "description": place.description,
+                "price": place.price,
+                "latitude": place.latitude,
+                "longitude": place.longitude,
+                "owner_id": place.owner_id,
+                "amenities": [{"id": a.id, "name": a.name}
+                              for a in getattr(place, "amenities", [])]
+            })
+
+        return result, 200
+
+
+@api.route('/places/<place_id>')
+class PlaceResource(Resource):
+
+    @api.response(200, 'Success')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Retrieve detailed information about a specific place"""
+        place = facade.get_place(int(place_id))
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        result = {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": place.owner_id,
+            "amenities": [{"id": a.id, "name": a.name}
+                          for a in getattr(place, "amenities", [])],
+            "reviews": [
+                {
+                    "id": r.id,
+                    "text": r.text,
+                    "rating": r.rating,
+                    "user_id": r.user_id
+                }
+                for r in getattr(place, "reviews", [])
+            ]
+        }
+
+        return result, 200
