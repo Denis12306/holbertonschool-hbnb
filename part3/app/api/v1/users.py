@@ -5,11 +5,17 @@ from app import bcrypt
 
 api = Namespace('users', description='User operations')
 
+
 user_model = api.model('User', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user'),
-    'password': fields.String(required=True, description='Password of the user')
+    'first_name': fields.String(required=True),
+    'last_name': fields.String(required=True),
+    'email': fields.String(required=True),
+    'password': fields.String(required=True)
+})
+
+user_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(),
+    'last_name': fields.String()
 })
 
 
@@ -18,7 +24,7 @@ class UserList(Resource):
 
     @jwt_required()
     @api.expect(user_model, validate=True)
-    @api.response(201, 'User successfully created')
+    @api.response(201, 'User created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
     @api.response(400, 'Password required')
@@ -34,42 +40,45 @@ class UserList(Resource):
         email = user_data.get('email')
         password = user_data.get('password')
 
-        if not password:
-            return {'error': 'Password required'}, 400
+        data = api.payload
+        email = data.get('email')
+        password = data.get('password')
+
         if not email:
             return {'error': 'Email required'}, 400
+        if not password:
+            return {'error': 'Password required'}, 400
 
-        existing_user = facade.get_user_by_email(email)
-        if existing_user:
+        if facade.get_user_by_email(email):
             return {'error': 'Email already registered'}, 400
 
-        user_data['password'] = bcrypt.generate_password_hash(
-            password).decode('utf-8')
-
         try:
-            new_user = facade.create_user(user_data)
-            return {'id': new_user.id, 'message': 'User created successfully'}, 201
+            new_user = facade.create_user(data)
         except ValueError as e:
             return {'error': str(e)}, 400
 
+        return {'id': new_user.id, 'message': 'User created successfully'}, 201
+
     @jwt_required()
-    @api.response(200, 'List of users retrieved successfully')
+    @api.response(200, 'List of users retrieved')
     def get(self):
-        """Retrieve a list of all users — admin only"""
+        """Retrieve all users — admin only"""
         claims = get_jwt()
         if not claims.get('is_admin'):
             return {'error': 'Admin access required'}, 403
 
-        all_users = facade.get_all_users()
-        return [{'id': u.id, 'first_name': u.first_name,
-                 'last_name': u.last_name, 'email': u.email}
-                for u in all_users], 200
+        users = facade.get_all_users()
+        return [
+            {'id': u.id, 'first_name': u.first_name,
+             'last_name': u.last_name, 'email': u.email}
+            for u in users
+        ], 200
 
 
 @api.route('/<user_id>')
 class UserResource(Resource):
 
-    @api.response(200, 'User details retrieved successfully')
+    @api.response(200, 'User retrieved')
     @api.response(404, 'User not found')
     def get(self, user_id):
         """Get user details by ID"""
@@ -80,17 +89,17 @@ class UserResource(Resource):
                 'last_name': user.last_name, 'email': user.email}, 200
 
     @jwt_required()
-    @api.expect(user_model, validate=True)
-    @api.response(200, 'User successfully updated')
+    @api.expect(user_update_model, validate=True)
+    @api.response(200, 'User updated')
     @api.response(403, 'Unauthorized')
     @api.response(404, 'User not found')
     def put(self, user_id):
-        """Update user details — own profile or admin"""
-        current_user_id = get_jwt_identity()
+        """Update user — own profile or admin"""
+        current_user = get_jwt_identity()
         claims = get_jwt()
-        is_admin = claims.get('is_admin')
+        is_admin = claims.get('is_admin', False)
 
-        if current_user_id != user_id and not is_admin:
+        if current_user != user_id and not is_admin:
             return {'error': 'Unauthorized'}, 403
 
         user = facade.get_user_by_id(user_id)
