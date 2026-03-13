@@ -36,10 +36,6 @@ class UserList(Resource):
         if not claims.get('is_admin'):
             return {'error': 'Admin privileges required'}, 403
 
-        user_data = api.payload
-        email = user_data.get('email')
-        password = user_data.get('password')
-
         data = api.payload
         email = data.get('email')
         password = data.get('password')

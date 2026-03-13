@@ -50,10 +50,10 @@ class PlaceList(Resource):
         place_data['owner_id'] = current_user_id
 
         try:
-            current_user = int(get_jwt_identity())
+            current_user = (get_jwt_identity())
             place_data = api.payload
 
-            owner_id = int(place_data.get("owner_id", 0))
+            owner_id = (place_data.get("owner_id", 0))
             if not facade.get_user_by_id(owner_id):
                 return {"error": "User does not exist"}, 404
 
@@ -100,7 +100,6 @@ class PlaceList(Resource):
 
 @api.route('/<place_id>')
 class PlaceIDResource(Resource):
-    @api.expect(place_model, validate=True)
     @api.response(200, 'Place details retrieved successfully')
     @api.response(404, 'Place not found')
     @api.response(403, 'Unauthorized')
@@ -129,6 +128,7 @@ class PlaceIDResource(Resource):
             "reviews": [{"id": r.id, "text": r.text, "rating": r.rating} for r in place.reviews]
         }, 200
 
+    @jwt_required()
     def put(self, place_id):
         """Update a place — owner or admin only"""
         current_user_id = get_jwt_identity()
@@ -149,7 +149,7 @@ class PlaceIDResource(Resource):
             return {'message': str(e)}, 400
 
 
-@api.route('/places/<place_id>/reviews')
+@api.route('/<place_id>/reviews')
 class ReviewPlacesList(Resource):
 
     @api.response(200, 'List of reviews for the place retrieved successfully')
@@ -171,63 +171,3 @@ class ReviewPlacesList(Resource):
             }
             for r in reviews
         ], 200
-
-
-@api.route('/places')
-class PlacesLists(Resource):
-
-    @api.response(200, 'Success')
-    def get(self):
-        """Retrieve a list of available places"""
-        places = facade.get_all_places() or []
-
-        result = []
-        for place in places:
-            result.append({
-                "id": place.id,
-                "title": place.title,
-                "description": place.description,
-                "price": place.price,
-                "latitude": place.latitude,
-                "longitude": place.longitude,
-                "owner_id": place.owner_id,
-                "amenities": [{"id": a.id, "name": a.name}
-                              for a in getattr(place, "amenities", [])]
-            })
-
-        return result, 200
-
-
-@api.route('/places/<place_id>')
-class PlaceResource(Resource):
-
-    @api.response(200, 'Success')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Retrieve detailed information about a specific place"""
-        place = facade.get_place(int(place_id))
-        if not place:
-            return {"error": "Place not found"}, 404
-
-        result = {
-            "id": place.id,
-            "title": place.title,
-            "description": place.description,
-            "price": place.price,
-            "latitude": place.latitude,
-            "longitude": place.longitude,
-            "owner_id": place.owner_id,
-            "amenities": [{"id": a.id, "name": a.name}
-                          for a in getattr(place, "amenities", [])],
-            "reviews": [
-                {
-                    "id": r.id,
-                    "text": r.text,
-                    "rating": r.rating,
-                    "user_id": r.user_id
-                }
-                for r in getattr(place, "reviews", [])
-            ]
-        }
-
-        return result, 200
