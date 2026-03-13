@@ -84,10 +84,12 @@ class SQLAlchemyRepository(Repository):
 
     def update(self, obj_id, data):
         obj = self.get(obj_id)
-        if obj:
-            for key, value in data.items():
-                setattr(obj, key, value)
-            db.session.commit()
+        if not obj:
+            return None
+        for key, value in data.items():
+            setattr(obj, key, value)
+        db.session.commit()
+        return obj
 
     def delete(self, obj_id):
         obj = self.get(obj_id)
@@ -96,4 +98,5 @@ class SQLAlchemyRepository(Repository):
             db.session.commit()
 
     def get_by_attribute(self, attr_name, attr_value):
-        return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
+        return self.model.query.filter(getattr(self.model, attr_name)
+                                       == attr_value).first()
