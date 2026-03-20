@@ -1,32 +1,16 @@
-#!/usr/bin/python3
-"""
-Module for the Review class.
-This module defines the Review class which inherits from BaseModel.
-"""
 from app.models.base_model import BaseModel
+from app import db
 
 
 class Review(BaseModel):
-    """
-    Represents a review for a place.
+    __tablename__ = 'reviews'
 
-    Attributes:
-        text (str): The content of the review.
-        rating (int): The rating given to the place (1-5).
-        place (Place): The Place instance associated with the review.
-        user (User): The User instance who wrote the review.
-    """
+    text = db.Column(db.String(1000), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    place_id = db.Column(db.String(36), nullable=False)
+    user_id = db.Column(db.String(36), nullable=False)
 
     def __init__(self, text, rating, place, user):
-        """
-        Initializes a new Review instance.
-
-        Args:
-            text (str): The review's content.
-            rating (int): Numerical rating from 1 to 5.
-            place (Place): The place being reviewed.
-            user (User): The author of the review.
-        """
         super().__init__()
         self.text = text
         self.rating = rating
@@ -35,7 +19,6 @@ class Review(BaseModel):
 
     @property
     def text(self):
-        """str: Get or set the content of the review."""
         return self._text
 
     @text.setter
@@ -46,7 +29,6 @@ class Review(BaseModel):
 
     @property
     def rating(self):
-        """int: Get or set the rating (must be between 1 and 5)."""
         return self._rating
 
     @rating.setter
@@ -57,7 +39,6 @@ class Review(BaseModel):
 
     @property
     def place(self):
-        """Place: Get or set the Place linked to this review."""
         return self._place
 
     @place.setter
@@ -65,10 +46,10 @@ class Review(BaseModel):
         if value is None:
             raise ValueError("The review must be linked to a valid Place")
         self._place = value
+        self.place_id = value.id
 
     @property
     def user(self):
-        """User: Get or set the User who authored this review."""
         return self._user
 
     @user.setter
@@ -76,3 +57,4 @@ class Review(BaseModel):
         if value is None:
             raise ValueError("The review must have a valid author(User)")
         self._user = value
+        self.user_id = value.id

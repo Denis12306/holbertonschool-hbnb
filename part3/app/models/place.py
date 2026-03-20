@@ -1,19 +1,18 @@
-#!/usr/bin/python3
-"""
-Module for the Place class.
-"""
 from app.models.base_model import BaseModel
+from app import db
 
 
 class Place(BaseModel):
-    """
-    Represents a place or accommodation available in the application.
-    """
+    __tablename__ = 'places'
+
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500), nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    owner_id = db.Column(db.String(36), nullable=False)
 
     def __init__(self, title, description, price, latitude, longitude, owner_id):
-        """
-        Initialize a new Place instance.
-        """
         super().__init__()
         self.title = title
         self.description = description
@@ -27,7 +26,6 @@ class Place(BaseModel):
 
     @property
     def title(self):
-        """Getter for title."""
         return self._title
 
     @title.setter
@@ -39,7 +37,6 @@ class Place(BaseModel):
 
     @property
     def description(self):
-        """Getter for description"""
         return self._description
 
     @description.setter
@@ -53,7 +50,6 @@ class Place(BaseModel):
 
     @property
     def price(self):
-        """Getter for price."""
         return self._price
 
     @price.setter
@@ -64,7 +60,6 @@ class Place(BaseModel):
 
     @property
     def latitude(self):
-        """Getter for latitude."""
         return self._latitude
 
     @latitude.setter
@@ -75,7 +70,6 @@ class Place(BaseModel):
 
     @property
     def longitude(self):
-        """Getter for longitude."""
         return self._longitude
 
     @longitude.setter
@@ -86,7 +80,6 @@ class Place(BaseModel):
 
     @property
     def owner(self):
-        """Getter for owner."""
         return self._owner
 
     @owner.setter
@@ -96,10 +89,8 @@ class Place(BaseModel):
         self._owner = value
 
     def add_review(self, review):
-        """Add a review to the place's list of reviews."""
         self.reviews.append(review)
 
     def add_amenity(self, amenity):
-        """Add an amenity to the place's list of amenities."""
         if amenity not in self.amenities:
             self.amenities.append(amenity)
