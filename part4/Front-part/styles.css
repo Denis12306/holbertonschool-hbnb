@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.logo {
+    width: 100px;
+}
+
+nav a {
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.login-button {
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+    border-radius: 5px;
+}
+
+.place-card, .review-card {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.details-button {
+    background-color: rgb(255, 200, 0);
+    color: black;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: auto;
+}
+
+input, textarea, select {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+}
