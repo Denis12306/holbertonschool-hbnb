@@ -1,4 +1,4 @@
-from app import create_app, bcrypt
+from app import create_app, bcrypt, db
 from app.services import facade
 
 def seed_admin():
@@ -12,13 +12,14 @@ def seed_admin():
         "email": admin_email,
         "first_name": "Admin",
         "last_name": "User",
-        "password": bcrypt.generate_password_hash("admin123").decode('utf-8'),  
+        "password": bcrypt.generate_password_hash("admin123").decode('utf-8'),
         "is_admin": True
     })
 
 app = create_app()
 
 with app.app_context():
+    db.create_all()
     seed_admin()
 
 if __name__ == '__main__':
