@@ -59,9 +59,10 @@ footer {
 
 .place-card {
     display: flex;
-	flex-direction: column;
+	flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
 }
 
 .images-container {
@@ -87,21 +88,6 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 30px;
-}
-
-.place-card {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-}
-
-details-button {
-    align-self: flex-start; /* Le bouton reste aligné à gauche */
-    background-color: rgb(255, 200, 0);
-    color: black;
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 5px;
 }
 
 h3 {
