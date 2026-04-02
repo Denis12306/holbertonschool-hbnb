@@ -56,3 +56,58 @@ footer {
     margin-top: 20px;
     padding: 10px;
 }
+
+.place-card {
+    display: flex;
+	flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.images-container {
+    display: flex;
+    gap: 5px;
+    justify-content: flex-start;
+    width: fit-content;
+}
+
+.images-container img {
+    width: 120px;
+    margin: 0;
+}
+
+.place-image {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+#places-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.place-card {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+details-button {
+    align-self: flex-start; /* Le bouton reste aligné à gauche */
+    background-color: rgb(255, 200, 0);
+    color: black;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+h3 {
+  width: 230px;
+}
+
+p {
+	width: 150px;
+}
