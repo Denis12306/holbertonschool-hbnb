@@ -52,6 +52,9 @@ input, textarea, select {
 }
 
 footer {
+	display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     margin-top: 20px;
     padding: 10px;
@@ -95,5 +98,16 @@ h3 {
 }
 
 p {
-	width: 150px;
+	width: 150px-300px;
+}
+
+.place-details .images-container {
+    display: flex;
+    gap: 10px;
+}
+
+.place-details .images-container img {
+    width: 50px;
+    height: 100px;
+    border-radius: 10px;
 }
