@@ -9,6 +9,10 @@ header {
     padding: 10px;
 }
 
+html {
+  background-color: #cdccb0;
+}
+
 .logo {
     width: 100px;
 }
