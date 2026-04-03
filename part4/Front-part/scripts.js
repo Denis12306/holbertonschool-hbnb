@@ -52,7 +52,7 @@ async function fetchPlaces(token) {
     if (response.ok) {
       const places = await response.json();
       displayPlaces(places);
-      setupPriceFilter(); // Appeler le filtre après affichage
+      setupPriceFilter();
     } else {
       alert('Failed to fetch places: ' + response.statusText);
     }
@@ -67,29 +67,10 @@ function displayPlaces(places) {
   if (!list) return;
   list.innerHTML = '';
 
-  // Créer le filtre si nécessaire
-  let filter = document.getElementById('price-filter');
-  if (!filter) {
-    const filterLabel = document.createElement('label');
-    filterLabel.textContent = 'Filter by max price: ';
-    filterLabel.htmlFor = 'price-filter';
-    filter = document.createElement('select');
-    filter.id = 'price-filter';
-    filter.innerHTML = `
-      <option value="10">10</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-      <option value="All" selected>All</option>
-    `;
-    list.parentNode.insertBefore(filterLabel, list);
-    list.parentNode.insertBefore(filter, list);
-  }
-
-  places.forEach(place => {
+places.forEach(place => {
     const div = document.createElement('div');
     div.className = 'place-card';
-    div.dataset.price = place.price; // stocker le prix pour le filtre
-    div.style.display = 'flex';
+    div.dataset.price = place.price;
     div.innerHTML = `
       <h3>${place.name}</h3>
       <p>${place.description}</p>
@@ -99,6 +80,21 @@ function displayPlaces(places) {
     list.appendChild(div);
   });
 }
+
+  places.forEach(place => {
+    const div = document.createElement('div');
+    div.className = 'place-card';
+    div.dataset.price = place.price;
+    div.style.display = 'flex';
+    div.innerHTML = `
+      <h3>${place.name}</h3>
+      <p>${place.description}</p>
+      <p>Price: $${place.price}/night</p>
+      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
+    `;
+    list.appendChild(div);
+  });
+
 
 function setupPriceFilter() {
   const filter = document.getElementById('price-filter');
@@ -113,7 +109,6 @@ function setupPriceFilter() {
   });
 }
 
-// === Détails d'un lieu ===
 function getPlaceIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
@@ -247,7 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = getCookie('token');
     const loginLink = document.getElementById('login-link');
     if (loginLink) loginLink.style.display = token ? 'none' : 'block';
+
     fetchPlaces(token);
+    setupPriceFilter();
   }
 
   const placeDetailsSection = document.getElementById('place-details');
