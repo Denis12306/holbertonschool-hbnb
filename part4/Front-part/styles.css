@@ -10,19 +10,30 @@ html, body {
 * {
     box-sizing: border-box;
 }
+
 header {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    align-items: center;
+    padding: 10px 40px;
+    background-color: #f0f0e0;
 }
 
-.logo {
-    width: 100px;
+.logo img {
+    width: 40px;
+    display: block;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 nav a {
-    margin-right: 10px;
     text-decoration: none;
+    color: #333;
+    font-weight: bold;
 }
 
 .login-button {

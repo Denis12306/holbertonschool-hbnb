@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<header>
-    <img src="../images/logo.png" class="logo" alt="Logo">
+  <header>
+    <div class="logo">
+      <img src="../images/logo.png" alt="Logo"> </div>
     <nav>
-        <a href="index.html">Home</a>
-        <a href="login.html" class="login-button">Login</a>
+      <a href="index.html">Home</a>
+      <a href="login.html" id="login-link" class="login-button">Login</a>
     </nav>
-</header>
+  </header>
 
-<main>
+  <main>
     <form id="login-form" class="form">
-        <h2>Login</h2>
+      <h2>Login</h2>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
 
-        <button type="submit">Login</button>
+      <button type="submit">Login</button>
     </form>
-</main>
+  </main>
 
-<footer>
-    <p>All rights reserved</p>
-</footer>
+  <footer>
+    <p>@All rights reserved, HolbertonSchool 2026, Denis Gavaud</p>
+  </footer>
 
-<script>
-const form = document.getElementById("login-form");
+  <script>
+    const form = document.getElementById("login-form");
 
-form.addEventListener("submit", function(e) {
-    e.preventDefault();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-    if(email === "admin@hbnb.io" && password === "admin123") {
+      if (email === "admin@hbnb.io" && password === "admin123") {
         alert("You are connect !");
         window.location.href = "index.html";
-    } else {
+      } else {
         alert("Email or password incorrect");
-    }
-});
-</script>
+      }
+    });
+  </script>
 
 </body>
+
 </html>
