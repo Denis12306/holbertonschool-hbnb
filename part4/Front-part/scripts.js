@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkAuthentication();
 });
 
-// --- Gestion des Cookies ---
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -10,7 +9,6 @@ function getCookie(name) {
     return null;
 }
 
-// --- Vérification de l'Authentification ---
 function checkAuthentication() {
     const token = getCookie('token');
     const loginLink = document.getElementById('login-link');
@@ -24,7 +22,6 @@ function checkAuthentication() {
     }
 }
 
-// --- Récupération des données API ---
 async function fetchPlaces(token) {
     const apiUrl = 'http://127.0.0.1:5000/api/v1/places/';
     const headers = { 'Content-Type': 'application/json' };
@@ -48,7 +45,6 @@ async function fetchPlaces(token) {
     }
 }
 
-// --- Affichage Dynamique des Lieux ---
 function displayPlaces(places) {
     const placesList = document.getElementById('places-list');
     if (!placesList) return;
@@ -79,26 +75,32 @@ function displayPlaces(places) {
     });
 }
 
-// --- Filtrage Client-Side ---
 function setupPriceFilter() {
     const priceFilter = document.getElementById('price-filter');
-    if (!priceFilter) return;
+    if (!priceFilter) {
+        console.error("Élément #price-filter non trouvé dans le HTML");
+        return;
+    }
 
     const newFilter = priceFilter.cloneNode(true);
     priceFilter.parentNode.replaceChild(newFilter, priceFilter);
 
     newFilter.addEventListener('change', (event) => {
-        const selectedMaxPrice = event.target.value;
+        const val = event.target.value;
         const allCards = document.querySelectorAll('.place-card');
 
         allCards.forEach(card => {
             const cardPrice = parseFloat(card.getAttribute('data-price'));
 
-            if (selectedMaxPrice === 'All' || selectedMaxPrice === 'all') {
-                card.style.display = 'flex'; //
+            if (val.toLowerCase() === 'all' || val === "") {
+                card.style.display = 'flex';
             } else {
-                const max = parseFloat(selectedMaxPrice);
-                card.style.display = (cardPrice <= max) ? 'flex' : 'none';
+                const max = parseFloat(val);
+                if (!isNaN(cardPrice) && cardPrice <= max) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
             }
         });
     });
