@@ -67,7 +67,7 @@ function displayPlaces(places) {
   if (!list) return;
   list.innerHTML = '';
 
-places.forEach(place => {
+  places.forEach(place => {
     const div = document.createElement('div');
     div.className = 'place-card';
     div.dataset.price = place.price;
@@ -81,30 +81,30 @@ places.forEach(place => {
   });
 }
 
-  places.forEach(place => {
-    const div = document.createElement('div');
-    div.className = 'place-card';
-    div.dataset.price = place.price;
-    div.style.display = 'flex';
-    div.innerHTML = `
+places.forEach(place => {
+  const div = document.createElement('div');
+  div.className = 'place-card';
+  div.dataset.price = place.price;
+  div.style.display = 'flex';
+  div.innerHTML = `
       <h3>${place.name}</h3>
       <p>${place.description}</p>
       <p>Price: $${place.price}/night</p>
       <a href="place.html?id=${place.id}" class="details-button">View Details</a>
     `;
-    list.appendChild(div);
-  });
+  list.appendChild(div);
+});
 
 
 function setupPriceFilter() {
   const filter = document.getElementById('price-filter');
   if (!filter) return;
 
-  filter.addEventListener('change', (event) => {
-    const maxPrice = event.target.value;
+  filter.addEventListener('change', () => {
+    const maxPrice = filter.value;
     document.querySelectorAll('.place-card').forEach(card => {
       const price = parseFloat(card.dataset.price);
-      card.style.display = maxPrice === 'All' || price <= parseFloat(maxPrice) ? 'flex' : 'none';
+      card.style.display = (maxPrice === 'All' || price <= parseFloat(maxPrice)) ? 'block' : 'none';
     });
   });
 }
