@@ -52,7 +52,7 @@ async function fetchPlaces(token) {
     if (response.ok) {
       const places = await response.json();
       displayPlaces(places);
-      setupPriceFilter();
+      setupPriceFilter(); // Appeler le filtre après affichage
     } else {
       alert('Failed to fetch places: ' + response.statusText);
     }
@@ -67,16 +67,35 @@ function displayPlaces(places) {
   if (!list) return;
   list.innerHTML = '';
 
+  // Créer le filtre si nécessaire
+  let filter = document.getElementById('price-filter');
+  if (!filter) {
+    const filterLabel = document.createElement('label');
+    filterLabel.textContent = 'Filter by max price: ';
+    filterLabel.htmlFor = 'price-filter';
+    filter = document.createElement('select');
+    filter.id = 'price-filter';
+    filter.innerHTML = `
+      <option value="10">10</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="All" selected>All</option>
+    `;
+    list.parentNode.insertBefore(filterLabel, list);
+    list.parentNode.insertBefore(filter, list);
+  }
+
   places.forEach(place => {
     const div = document.createElement('div');
     div.className = 'place-card';
-    div.dataset.price = place.price;
+    div.dataset.price = place.price; // stocker le prix pour le filtre
+    div.style.display = 'flex';
     div.innerHTML = `
-            <h3>${place.name}</h3>
-            <p>${place.description}</p>
-            <p>Price: $${place.price}/night</p>
-            <a href="place.html?id=${place.id}" class="details-button">View Details</a>
-        `;
+      <h3>${place.name}</h3>
+      <p>${place.description}</p>
+      <p>Price: $${place.price}/night</p>
+      <a href="place.html?id=${place.id}" class="details-button">View Details</a>
+    `;
     list.appendChild(div);
   });
 }
@@ -85,22 +104,16 @@ function setupPriceFilter() {
   const filter = document.getElementById('price-filter');
   if (!filter) return;
 
-  filter.innerHTML = `
-        <option value="10">10</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="All" selected>All</option>
-    `;
-
   filter.addEventListener('change', (event) => {
     const maxPrice = event.target.value;
     document.querySelectorAll('.place-card').forEach(card => {
       const price = parseFloat(card.dataset.price);
-      card.style.display = maxPrice === 'All' || price <= parseFloat(maxPrice) ? 'block' : 'none';
+      card.style.display = maxPrice === 'All' || price <= parseFloat(maxPrice) ? 'flex' : 'none';
     });
   });
 }
 
+// === Détails d'un lieu ===
 function getPlaceIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return params.get('id');
@@ -136,13 +149,13 @@ function displayPlaceDetails(place) {
   const div = document.createElement('div');
   div.className = 'place-details';
   div.innerHTML = `
-        <h3 class="details-title">${place.name}</h3>
-        <p class="place-info"><b>Description:</b> ${place.description}</p>
-        <p class="place-info"><b>Location:</b> ${place.latitude}, ${place.longitude}</p>
-        <p class="place-info"><b>Price per night:</b> $${place.price}</p>
-        <p class="place-info"><b>Amenities:</b> ${place.amenities.length ? place.amenities.map(a => a.name).join(', ') : 'None'}</p>
-        <p class="place-info"><b>Host:</b> ${place.owner.first_name} ${place.owner.last_name} (${place.owner.email})</p>
-    `;
+    <h3 class="details-title">${place.name}</h3>
+    <p class="place-info"><b>Description:</b> ${place.description}</p>
+    <p class="place-info"><b>Location:</b> ${place.latitude}, ${place.longitude}</p>
+    <p class="place-info"><b>Price per night:</b> $${place.price}</p>
+    <p class="place-info"><b>Amenities:</b> ${place.amenities.length ? place.amenities.map(a => a.name).join(', ') : 'None'}</p>
+    <p class="place-info"><b>Host:</b> ${place.owner.first_name} ${place.owner.last_name} (${place.owner.email})</p>
+  `;
   detailsSection.appendChild(div);
 
   const reviewsSection = document.getElementById('reviews');
@@ -153,10 +166,10 @@ function displayPlaceDetails(place) {
         const reviewDiv = document.createElement('div');
         reviewDiv.className = 'review-card';
         reviewDiv.innerHTML = `
-                    <p><i>${review.user.first_name} ${review.user.last_name}</i></p>
-                    <div>${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                    <p>${review.text}</p>
-                `;
+          <p><i>${review.user.first_name} ${review.user.last_name}</i></p>
+          <div>${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+          <p>${review.text}</p>
+        `;
         reviewsSection.appendChild(reviewDiv);
       });
     } else {
@@ -208,7 +221,7 @@ function setupAddReviewForm() {
   const reviewForm = document.getElementById('review-form');
   if (!reviewForm) return;
 
-  const token = checkAuthentication();
+  const token = getCookie('token');
   if (!token) return;
 
   const placeId = getPlaceIdFromURL();
