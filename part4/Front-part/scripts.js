@@ -39,6 +39,20 @@ function setupLoginForm() {
   });
 }
 
+function updateNavigation() {
+    const token = getCookie('token');
+    const loginLink = document.getElementById('login-link');
+
+    if (loginLink) {
+        if (token) {
+            loginLink.style.display = 'none';
+
+        } else {
+            loginLink.style.display = 'block';
+        }
+    }
+}
+
 async function fetchPlaces(token) {
   try {
     const response = await fetch('http://127.0.0.1:5000/api/v1/places', {
