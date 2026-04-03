@@ -24,24 +24,24 @@ function checkAuthentication() {
 
 async function fetchPlaces(token) {
     const apiUrl = 'http://127.0.0.1:5000/api/v1/places/';
-    const headers = { 'Content-Type': 'application/json' };
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
 
     try {
-        const response = await fetch(apiUrl, { method: 'GET', headers: headers });
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
+        });
+
         if (response.ok) {
             const places = await response.json();
             displayPlaces(places);
-
-            setupPriceFilter();
         } else {
-            console.error('Erreur lors de la récupération des lieux');
+            console.warn("Le serveur a répondu mais avec une erreur.");
         }
     } catch (error) {
-        console.error('Erreur réseau :', error);
+        console.error("Impossible de joindre l'API (CORS ou Serveur éteint).");
+        console.log("Le filtre va quand même être activé sur les éléments HTML statiques.");
+    } finally {
+        setupPriceFilter();
     }
 }
 
@@ -77,25 +77,22 @@ function displayPlaces(places) {
 
 function setupPriceFilter() {
     const priceFilter = document.getElementById('price-filter');
-    if (!priceFilter) {
-        console.error("Élément #price-filter non trouvé dans le HTML");
-        return;
-    }
+    if (!priceFilter) return;
 
     const newFilter = priceFilter.cloneNode(true);
     priceFilter.parentNode.replaceChild(newFilter, priceFilter);
 
     newFilter.addEventListener('change', (event) => {
-        const val = event.target.value;
+        const selectedValue = event.target.value.trim().toLowerCase();
         const allCards = document.querySelectorAll('.place-card');
 
         allCards.forEach(card => {
             const cardPrice = parseFloat(card.getAttribute('data-price'));
 
-            if (val.toLowerCase() === 'all' || val === "") {
+            if (selectedValue === 'all' || selectedValue === '') {
                 card.style.display = 'flex';
             } else {
-                const max = parseFloat(val);
+                const max = parseFloat(selectedValue);
                 if (!isNaN(cardPrice) && cardPrice <= max) {
                     card.style.display = 'flex';
                 } else {
